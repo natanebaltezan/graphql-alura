@@ -4,16 +4,16 @@ const userSchema = gql `
 scalar DateTime
 
   type User {
-    nome: String!
-    ativo: Boolean!
+    name: String!
+    active: Boolean!
     email: String
     role: Role!
     createdAt: DateTime
   }
 
   input UserInput {
-    nome: String
-    ativo: Boolean
+    name: String
+    active: Boolean
     email: String
     role: RolesType
     createdAt: DateTime
@@ -25,9 +25,9 @@ scalar DateTime
   }
 
   enum RolesType {
-    ESTUDANTE
-    DOCENTE
-    COORDENACAO
+    STUDENT
+    TEACHER
+    COORDINATION
   }
 
   type Query {
