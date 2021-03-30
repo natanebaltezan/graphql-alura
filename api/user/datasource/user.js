@@ -1,12 +1,10 @@
 const { RESTDataSource } = require('apollo-datasource-rest');
+const { success, notFound, created, internalServerError } = require('../../utils/queryStatus');
+
 class UsersAPI extends RESTDataSource {
   constructor() {
     super();
     this.baseURL = 'http://localhost:3000';
-    this.customResponse = {
-      code: 200,
-      message: 'Operação efetuada com sucesso.'
-    }
   };
 
   async getUsers() {
@@ -21,37 +19,67 @@ class UsersAPI extends RESTDataSource {
   };
 
   async getUserById(id) {
-    const user = await this.get(`/users/${id}`);
-    user.role = await this.get(`/roles/${user.role}`);
-    return user;
+    try {
+      const user = await this.get(`/users/${id}`);
+      user.role = await this.get(`/roles/${user.role}`);
+      if (!user) {
+        return notFound(`Não foi encontrado nenhum usuário com id ${id}`);
+      }
+      const result = success('Operação realizada com sucesso.');
+      return (
+        {
+          ...result,
+          user
+        });
+    } catch (error) {
+      return internalServerError(error.message);
+    }
   };
 
   async addUser(user) {
-    const users = await this.get('/users');
-    user.id = users.length + 1;
-    const role = await this.get(`roles?type=${user.role}`);
-    await this.post('users', { ...user, role: role[0].id });
-    return ({
-      ...user,
-      role: role[0]
-    });
+    try {
+      const users = await this.get('/users');
+      user.id = users.length + 1;
+      const role = await this.get(`roles?type=${user.role}`);
+      const createdUser = await this.post('users', { ...user, role: role[0].id });
+      const result = created(`Usuário ${createdUser.id} criado com sucesso.`);
+      return (
+        {
+          ...result,
+          user: {
+            ...createdUser,
+            role: role[0]
+          }
+        });
+    } catch (error) {
+      return internalServerError(error.message);
+    }
   };
 
   async updateUser(newData) {
-    const role = await this.get(`roles?type=${newData.user.role}`);
-    await this.put(`users/${newData.id}`, { ...newData.user, role: role[0].id });
-    return ({
-      ...this.customResponse,
-      user: {
-        ...newData.user,
-        role: role[0]
-      }
-    });
+    try {
+      const role = await this.get(`roles?type=${newData.user.role}`);
+      const updatedUser = await this.put(`users/${newData.id}`, { ...newData.user, role: role[0].id });
+      const result = success(`Usuário ${updatedUser.id} foi atualizado.`);
+      return ({
+        ...result,
+        user: {
+          ...updatedUser,
+          role: role[0]
+        }
+      });
+    } catch (error) {
+      return internalServerError(error.message);
+    }
   };
 
   async deleteUser(id) {
-    await this.delete(`users/${id}`);
-    return this.customResponse;
+    try {
+      await this.delete(`users/${id}`);
+      return success(`Usuário ${id} deletado.`);
+    } catch (error) {
+      return internalServerError(error.message);
+    }
   };
 };
 

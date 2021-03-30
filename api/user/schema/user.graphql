@@ -32,28 +32,35 @@ scalar DateTime
 
   type Query {
     users: [User]
-    user(id: ID!):  User!
+    user(id: ID!): getUserResponse!
   }
 
   type Mutation {
-    addUser(user: UserInput): User!
+    addUser(user: UserInput): addUserResponse!
     updateUser(id: ID!, user: UserInput): updateUserResponse!
     deleteUser(id: ID!): deleteUserResponse!
   }
 
-  interface customResponse {
-    code: Int!
+  type getUserResponse{
+    status: String!
     message: String!
+    user: User
   }
 
-    type updateUserResponse implements customResponse {
-    code: Int!
+  type addUserResponse{
+    status: String!
     message: String!
-    user: User!
+    user: User
   }
 
-  type deleteUserResponse implements customResponse {
-    code: Int!
+  type updateUserResponse {
+    status: String!
+    message: String!
+    user: User
+  }
+
+  type deleteUserResponse {
+    status: String!
     message: String!
   }
 `
