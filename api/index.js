@@ -1,6 +1,6 @@
 const { ApolloServer } = require('apollo-server');
-const userSchema = require('./user/schema/user.graphql');
-const userResolvers = require('./user/resolvers/userResolvers');
+const userSchema = require('./user/user.graphql');
+const userResolvers = require('./user/userResolvers');
 const UsersAPI = require('./user/datasource/user');
 
 const typeDefs = [userSchema];
