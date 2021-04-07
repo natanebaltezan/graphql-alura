@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "coverage": "nyc report",
+    "pretest": "npm audit --production --audit-level=moderate",
+    "posttest": "nyc check-coverage --statements 90 --branches 90 --functions 90 --lines 90",
     "start": "nodemon -e js,json,graphql ./api/index.js",
     "mocha": "mocha",
     "test": "nyc --reporter=lcov mocha && npm run coverage"
@@ -36,7 +39,6 @@
     "eslint": "^7.23.0",
     "mocha": "^8.3.2",
     "nock": "^13.0.11",
-    "nyc": "^15.1.0",
-    "sinon": "^10.0.0"
+    "nyc": "^15.1.0"
   }
 }
