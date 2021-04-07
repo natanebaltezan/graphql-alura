@@ -1,24 +1,11 @@
 const { assert } = require('chai');
 const nock = require('nock');
-const sinon = require('sinon');
 const Chance = require('chance');
 const UsersAPI = require('../../api/user/datasource/user');
-const apolloServer = require('./../../api/index');
-const sandbox = sinon.createSandbox();
-
-const {
-  success,
-  notFound,
-  created,
-  internalServerError
-} = require('../../api/utils/queryStatus');
-
-let app;
 
 describe('User service tests - Get Users', () => {
   const usersAPI = new UsersAPI();
   const chance = new Chance();
-  const nocks = {};
   const url = 'http://localhost:3000';
 
   const mockUsers = [
@@ -42,7 +29,6 @@ describe('User service tests - Get Users', () => {
     role: mockRoles[0].type,
     createdAt: "2021-02-26T00:00:00.000Z"
   };
-
 
   it('Should create an user when body is correct', async () => {
     const expectedUser = {
