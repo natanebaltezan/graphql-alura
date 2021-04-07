@@ -5,7 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon -e js,json,graphql ./api/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "mocha": "mocha",
+    "test": "nyc --reporter=lcov mocha && npm run coverage"
+  },
+  "mocha": {
+    "reporter": "spec",
+    "exit": true,
+    "ui": "bdd",
+    "recursive": true,
+    "timeout": 5000
   },
   "repository": {
     "type": "git",
@@ -21,5 +29,14 @@
     "graphql-tools": "^7.0.3",
     "json-server": "^0.16.1",
     "nodemon": "^2.0.4"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chance": "^1.1.7",
+    "eslint": "^7.23.0",
+    "mocha": "^8.3.2",
+    "nock": "^13.0.11",
+    "nyc": "^15.1.0",
+    "sinon": "^10.0.0"
   }
 }
