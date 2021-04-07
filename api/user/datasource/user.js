@@ -1,5 +1,4 @@
 const { RESTDataSource } = require('apollo-datasource-rest');
-const { use } = require('chai');
 const { success, notFound, created, internalServerError } = require('../../utils/queryStatus');
 
 class UsersAPI extends RESTDataSource {
