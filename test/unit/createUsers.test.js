@@ -1,12 +1,11 @@
 const { assert } = require('chai');
-const nock = require('nock');
+const nocks = require('../utils/nocks');
 const Chance = require('chance');
 const UsersAPI = require('../../api/user/datasource/user');
 
-describe('User service tests', () => {
+describe('CreateUsers Tests', () => {
   const usersAPI = new UsersAPI();
   const chance = new Chance();
-  const url = 'http://localhost:3000';
 
   const mockRoles = [{
     id: 1,
@@ -24,10 +23,10 @@ describe('User service tests', () => {
     }];
 
   afterEach(() => {
-    nock.cleanAll();
+    nocks.cleanAll();
   });
 
-  it('Should create an user when body is correct', async () => {
+  it('Should return an user when the request is correct', async () => {
     const body = {
       name: chance.name(),
       active: true,
@@ -42,35 +41,14 @@ describe('User service tests', () => {
       id: mockUsers.length + 1
     };
 
-    nock(url)
-      .get('/users')
-      .reply(
-        200,
-        mockUsers
-      );
-
-    nock(url)
-      .get(`/roles?type=${mockRoles[0].type}`)
-      .reply(
-        200,
-        mockRoles
-      );
-
-    nock(url)
-      .post('/users', { ...body, role: mockRoles[0].id })
-      .reply(
-        200,
-        expectedUser
-      );
+    const nockGetUsers = nocks.getUsers({ users: mockUsers });
+    const nockGetRoles = nocks.getRoleByType({ roleType: body.role, role: mockRoles });
+    const nockPostUser = nocks.postUser({ data: { ...body, role: mockRoles[0].id }, user: expectedUser })
 
     const result = await usersAPI.addUser(body);
-
-    assert.strictEqual(result.user.name, expectedUser.name);
-    assert.strictEqual(result.user.active, expectedUser.active);
-    assert.strictEqual(result.user.email, expectedUser.email);
-    assert.strictEqual(result.user.createdAt, expectedUser.createdAt);
-    assert.strictEqual(result.user.id, expectedUser.id);
-    assert.strictEqual(result.user.role, expectedUser.role);
-    assert.isTrue(nock.isDone());
+    assert.deepEqual(result.user, expectedUser);
+    assert.isTrue(nockGetUsers.isDone());
+    assert.isTrue(nockGetRoles.isDone());
+    assert.isTrue(nockPostUser.isDone());
   });
 });
