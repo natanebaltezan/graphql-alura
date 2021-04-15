@@ -31,8 +31,8 @@ scalar DateTime
   }
 
   type Query {
-    users: [User]
-    user(id: ID!): getUserResponse!
+    getUsers: [User]
+    getUserById(id: ID!): getUserResponse!
   }
 
   type Mutation {

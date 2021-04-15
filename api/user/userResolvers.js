@@ -14,8 +14,8 @@ const userResolvers = {
     parseLiteral: (ast) => new Date(ast.value)
   }),
   Query: {
-    users: (root, args, { dataSources }) => dataSources.usersAPI.getUsers(),
-    user: (root, { id }, { dataSources }) => dataSources.usersAPI.getUserById(id)
+    getUsers: (root, args, { dataSources }) => dataSources.usersAPI.getUsers(),
+    getUserById: (root, { id }, { dataSources }) => dataSources.usersAPI.getUserById(id)
   },
   Mutation: {
     addUser: async (root, { user }, { dataSources }) => dataSources.usersAPI.addUser(user),
