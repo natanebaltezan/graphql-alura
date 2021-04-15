@@ -9,14 +9,16 @@ class UsersAPI extends RESTDataSource {
   };
 
   async getUsers() {
-    const users = await this.get('/users');
-    return users.map(async user => ({
+    const getUsers = await this.get('/users');
+
+    const users = await Promise.all(getUsers.map(async user => ({
       id: user.id,
       name: user.name,
       email: user.email,
       active: user.active,
       role: await this.get(`/roles/${user.role}`)
-    }));
+    })));
+    return users;
   };
 
   async getUserById(id) {
@@ -41,21 +43,20 @@ class UsersAPI extends RESTDataSource {
     try {
       const users = await this.get('/users');
       const role = await this.get(`roles?type=${user.role}`);
-      const createdUser = await this.post('users', { ...user, role: role[0].id });
-      const result = created(`Usuário ${createdUser.id} criado com sucesso.`);
+      const createdUser = await this.post('/users', { ...user, role: role[0].id });
       if (!users.length) {
         user.id = 1;
       } else {
         user.id = users.length + 1;
       }
-      return (
-        {
-          ...result,
-          user: {
-            ...createdUser,
-            role: role[0].id
-          }
-        });
+      const response = created(`Usuário ${createdUser.id} criado com sucesso.`);
+      return ({
+        ...response,
+        user: {
+          ...createdUser,
+          role: role[0].id
+        }
+      });
     } catch (error) {
       return internalServerError(error.message);
     }
