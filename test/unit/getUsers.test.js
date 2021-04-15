@@ -28,14 +28,14 @@ describe('User service tests', () => {
   });
 
   it('Should return an array of users when getUsers is called', async () => {
-    const nockGetUsers = nock(url)
+    nock(url)
       .get('/users')
       .reply(
         200,
         mockUsers
       );
 
-    const nockGetRole = nock(url)
+    nock(url)
       .get(`/roles/${mockUsers[0].role}`)
       .reply(
         200,
@@ -47,7 +47,6 @@ describe('User service tests', () => {
     assert.isArray(result);
     assert.lengthOf(result, mockUsers.length);
     assert.deepEqual(result[0].role, mockRoles[0]);
-    assert.isTrue(nockGetUsers.isDone());
-    assert.isTrue(nockGetRole.isDone());
+    assert.isTrue(nock.isDone());
   });
 });
