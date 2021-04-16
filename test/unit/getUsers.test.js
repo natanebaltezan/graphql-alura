@@ -1,34 +1,17 @@
 const { assert } = require('chai');
 const nocks = require('../utils/nocks');
-const Chance = require('chance');
+const { createRole, createUser } = require('../utils/fixture/fixture');
 const UsersAPI = require('../../api/user/datasource/user');
 
+const usersAPI = new UsersAPI();
+
 describe('GetUsers Tests', () => {
-  const usersAPI = new UsersAPI();
-  const chance = new Chance();
-
-  const mockRoles = [{
-    id: 1,
-    type: chance.word()
-  }];
-
+  const mockRole = createRole();
   const mockUsers = [
-    {
-      id: 1,
-      name: chance.name(),
-      active: true,
-      email: chance.email(),
-      role: mockRoles[0].id,
-      createdAt: chance.date()
-    },
-    {
-      id: 2,
-      name: chance.name(),
-      active: true,
-      email: chance.email(),
-      role: mockRoles[0].id,
-      createdAt: chance.date()
-    }];
+    createUser(),
+    createUser(),
+    createUser()
+  ];
 
   afterEach(() => {
     nocks.cleanAll();
@@ -36,13 +19,13 @@ describe('GetUsers Tests', () => {
 
   it('Should return an array of users when the request is correct', async () => {
     const nockGetUsers = nocks.getUsers({ users: mockUsers });
-    const nockGetRole = nocks.getRoleById({ roleId: mockUsers[0].role, role: mockRoles[0] })
+    const nockGetRole = nocks.getRoleById({ roleId: mockUsers[0].role, role: mockRole[0] });
 
     const result = await usersAPI.getUsers();
 
     assert.isArray(result);
     assert.lengthOf(result, mockUsers.length);
-    assert.deepEqual(result[0].role, mockRoles[0]);
+    assert.deepEqual(result[0].role, mockRole[0]);
     assert.isTrue(nockGetUsers.isDone());
     assert.isTrue(nockGetRole.isDone());
   });
