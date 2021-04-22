@@ -24,10 +24,11 @@ class UsersAPI extends RESTDataSource {
   async getUserById(id) {
     try {
       const user = await this.get(`/users/${id}`);
-      user.role = await this.get(`/roles/${user.role}`);
       if (!user) {
         return notFound(`Não foi encontrado nenhum usuário com id ${id}`);
       }
+      const role = await this.get(`/roles/${user.role}`);
+      user.role = role.id;
       const result = success('Operação realizada com sucesso.');
       return (
         {

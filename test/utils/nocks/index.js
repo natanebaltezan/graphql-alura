@@ -22,6 +22,21 @@ nocks.getUsers = (options = {}) => {
     );
 };
 
+nocks.getUser = (options = {}) => {
+  const path = `/users/${options.userId}`;
+  if (options.errorMessage) {
+    return nock(url)
+      .get(path)
+      .replyWithError(options.errorMessage);
+  }
+  return nock(url)
+    .get(path)
+    .reply(
+      options.statusCode || 200,
+      options.user
+    );
+};
+
 nocks.getRoleById = (options = {}) => {
   const path = `/roles/${options.roleId}`;
   if (options.errorMessage) {

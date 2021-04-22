@@ -1,13 +1,13 @@
 const { assert } = require('chai');
 const nocks = require('../utils/nocks');
-const { createRole, createUser } = require('../utils/fixture/fixture');
+const { roles, createUser } = require('../utils/fixture/fixture');
 const Chance = require('chance');
 const UsersAPI = require('../../api/user/datasource/user');
 
 const usersAPI = new UsersAPI();
 const chance = new Chance();
 describe('CreateUsers Tests', () => {
-  const mockRole = createRole();
+  const mockRole = roles;
   const mockUsers = [
     createUser(),
     createUser()
